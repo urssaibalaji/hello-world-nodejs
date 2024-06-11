@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "hello_world" {
   container_definitions = jsonencode([
     {
       name      = "hello-world"
-      image     = "${aws_ecr_repository.hello_world.repository_url}:latest"
+      image     = "urssaibalaji/hello-world-nodejs:latest"
       essential = true
       portMappings = [
         {
@@ -23,8 +23,8 @@ resource "aws_ecs_task_definition" "hello_world" {
     }
   ])
 
-  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn      = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn = "arn:aws:iam::891376961949:role/ecsTaskExecutionRole"
+  task_role_arn      = "arn:aws:iam::891376961949:role/ecsTaskExecutionRole"
 }
 
 resource "aws_ecs_service" "hello_world" {
