@@ -1,11 +1,7 @@
-output "cluster_id" {
-  value = aws_ecs_cluster.cluster.id
+output "ecs_cluster_name" {
+  value = aws_ecs_cluster.main.name
 }
 
-output "service_name" {
-  value = aws_ecs_service.service.name
-}
-
-output "task_definition" {
-  value = aws_ecs_task_definition.task.arn
+output "ecs_service_name" {
+  value = aws_ecs_service.hello_world.name
 }
