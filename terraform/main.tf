@@ -1,7 +1,9 @@
+# Define AWS ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "hello-world-app"
 }
 
+# Define AWS ECS Task Definition
 resource "aws_ecs_task_definition" "hello_world" {
   family                   = "hello-world-task"
   network_mode             = "awsvpc"
@@ -27,6 +29,48 @@ resource "aws_ecs_task_definition" "hello_world" {
   task_role_arn      = "arn:aws:iam::891376961949:role/ecsTaskExecutionRole"
 }
 
+# Define AWS Load Balancer Target Group
+resource "aws_lb_target_group" "hello_world" {
+  name        = "hello-world-tg"
+  port        = 3000
+  protocol    = "HTTP"
+  vpc_id      = "vpc-0239559029a1d22b7"
+  target_type = "ip"
+
+  health_check {
+    path                = "/"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    matcher             = "200"
+  }
+}
+
+# Define AWS Load Balancer
+resource "aws_lb" "hello_world" {
+  name               = "hello-world-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = ["sg-019423dc02284f052"]
+  subnets            = ["subnet-0d32508389535e712", "subnet-0f380a26b9b500d76"]
+
+  enable_deletion_protection = false
+}
+
+# Define AWS Load Balancer Listener
+resource "aws_lb_listener" "hello_world" {
+  load_balancer_arn = aws_lb.hello_world.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.hello_world.arn
+  }
+}
+
+# Define AWS ECS Service
 resource "aws_ecs_service" "hello_world" {
   name            = "hello-world-service"
   cluster         = aws_ecs_cluster.main.id
@@ -46,43 +90,4 @@ resource "aws_ecs_service" "hello_world" {
   }
 
   depends_on = [aws_lb_listener.hello_world]
-}
-
-
-resource "aws_lb" "hello_world" {
-  name               = "hello-world-lb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = ["sg-019423dc02284f052"]
-  subnets            = ["subnet-0d32508389535e712", "subnet-0f380a26b9b500d76"]
-
-  enable_deletion_protection = false
-}
-
-resource "aws_lb_target_group" "hello_world" {
-  name     = "hello-world-tg"
-  port     = 3000
-  protocol = "HTTP"
-  vpc_id   = "vpc-0239559029a1d22b7"
-  target_type = "ip"
-
-  health_check {
-    path                = "/"
-    interval            = 30
-    timeout             = 5
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    matcher             = "200"
-  }
-}
-
-resource "aws_lb_listener" "hello_world" {
-  load_balancer_arn = aws_lb.hello_world.arn
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.hello_world.arn
-  }
 }
