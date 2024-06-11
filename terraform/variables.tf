@@ -1,3 +1,3 @@
 variable "image_url" {
-  description = "Docker image URL"
+  description = "urssaibalaji/hello-world-nodejs:latest"
 }
