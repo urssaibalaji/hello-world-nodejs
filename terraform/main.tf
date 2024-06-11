@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "hello_world" {
   target_type = "ip"
 
   health_check {
-    path                = "/health"  # Update the health check path to match your application's health check endpoint
+    path                = "/"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
@@ -52,8 +52,8 @@ resource "aws_lb" "hello_world" {
   name               = "hello-world-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = ["sg-019423dc02284f052"]  # Update with your security group ID
-  subnets            = ["subnet-0d32508389535e712", "subnet-0f380a26b9b500d76"]  # Update with your subnet IDs
+  security_groups    = ["sg-019423dc02284f052"]
+  subnets            = ["subnet-0d32508389535e712", "subnet-0f380a26b9b500d76"]
 
   enable_deletion_protection = false
 }
@@ -79,8 +79,8 @@ resource "aws_ecs_service" "hello_world" {
   launch_type     = "FARGATE"
   
   network_configuration {
-    subnets         = ["subnet-0d32508389535e712", "subnet-0f380a26b9b500d76"]  # Update with your subnet IDs
-    security_groups = ["sg-019423dc02284f052"]  # Update with your security group ID
+    subnets         = ["subnet-0d32508389535e712", "subnet-0f380a26b9b500d76"]
+    security_groups = ["sg-019423dc02284f052"]
   }
   
   load_balancer {
