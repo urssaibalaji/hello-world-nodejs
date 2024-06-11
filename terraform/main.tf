@@ -61,9 +61,10 @@ resource "aws_lb" "hello_world" {
 
 resource "aws_lb_target_group" "hello_world" {
   name     = "hello-world-tg"
-  port     = 80
+  port     = 3000
   protocol = "HTTP"
   vpc_id   = "vpc-0239559029a1d22b7"
+  target_type = "ip"
 
   health_check {
     path                = "/"
